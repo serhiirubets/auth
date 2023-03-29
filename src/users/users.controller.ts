@@ -1,12 +1,25 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { CreateUserDto } from './dto/create-user.dto';
+import { User } from './users.model';
 import { UserService } from './users.service';
 
 @Controller('/api')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @ApiOperation({ summary: 'Get all users '})
+  @ApiResponse({ status: 200, type: [User] })
   @Get('/users')
-  getUsers(): any[] {
+  getAll(): Promise<User[]> {
     return this.userService.getUsers();
+  }
+
+  @ApiOperation({ summary: 'Create user '})
+  @ApiResponse({ status: 200, type: User })
+  @Post('/users')
+  create (@Body() userDto: CreateUserDto): Promise<User> {
+    console.log('CTRL', userDto);
+    return this.userService.createUser(userDto);
   }
 }
